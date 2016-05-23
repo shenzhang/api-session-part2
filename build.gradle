@@ -1,0 +1,93 @@
+// more details about springboot gradle plugin see:
+// http://docs.spring.io/autorepo/docs/spring-boot/1.2.0.BUILD-SNAPSHOT/reference/html/build-tool-plugins-gradle-plugin.html
+
+apply plugin: 'spring-boot'
+//apply plugin: 'war'      // if you want to package this project into a war file and deploy it to a external web container, please uncomment it.
+
+ext {
+  springbootVersion = '1.3.5.RELEASE'
+}
+
+jar {
+    baseName = 'springboot-demo'
+    version = '0.0.1-SNAPSHOT'
+}
+
+buildscript {
+    repositories {
+        maven { url 'http://127.0.0.1:8081/nexus/content/groups/public' }
+        jcenter()
+    }
+
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
+    }
+}
+
+allprojects {
+    apply plugin: 'idea'
+    apply plugin: 'java'
+
+    repositories {
+        maven { url 'http://127.0.0.1:8081/nexus/content/groups/public' }
+        jcenter()
+    }
+
+    idea {
+        project {
+            jdkName = '1.8'
+            languageLevel = '1.8'
+        }
+    }
+}
+
+dependencies {
+    compile(
+            'org.springframework.boot:spring-boot-starter-web',
+            'org.springframework.boot:spring-boot-starter-actuator'
+            ,
+            // 'org.springframework.boot:spring-boot-starter-jdbc',
+
+            // 'org.springframework.boot:spring-boot-starter-thymeleaf',
+            //
+            // 'org.mybatis:mybatis:3.3.0',
+            // 'org.mybatis:mybatis-spring:1.2.3',
+
+          //  'com.h2database:h2:1.4.188',
+            // 'mysql:mysql-connector-java:5.1.34',
+
+            'com.google.guava:guava:18.0'
+    )
+
+
+    testCompile(
+            'junit:junit:4.11',
+            'org.springframework.boot:spring-boot-starter-test'
+    )
+}
+
+idea.project.ipr {
+    withXml { provider ->
+        provider.node.component
+                .find { it.@name == 'VcsDirectoryMappings' }
+                .mapping.@vcs = 'Git'
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.6'
+}
+
+applicationDefaultJvmArgs = [
+        "-Dspring.config.name=environment",
+        "-Dspring.profiles.active=local"
+]
+
+task bootDebug(dependsOn: bootRun) {
+}
+
+gradle.taskGraph.whenReady { taskGraph ->
+    if (taskGraph.hasTask(bootDebug)) {
+        applicationDefaultJvmArgs << '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'
+    }
+}
