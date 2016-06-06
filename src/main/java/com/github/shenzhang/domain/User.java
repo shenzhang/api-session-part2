@@ -6,9 +6,8 @@ package com.github.shenzhang.domain;
  * Time: 4:10 PM
  */
 public class User {
-    private int id;
+    private long id;
     private String name;
-    private int age;
 
     public String getName() {
         return name;
@@ -18,15 +17,7 @@ public class User {
         this.name = name;
     }
 
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public int getId() {
+    public long getId() {
         return id;
     }
 

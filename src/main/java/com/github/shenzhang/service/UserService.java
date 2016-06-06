@@ -1,15 +1,23 @@
 package com.github.shenzhang.service;
 
-import org.springframework.stereotype.Service;
+import com.github.shenzhang.domain.User;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
- * User: shenzhang
- * Date: 11/7/14
- * Time: 4:25 PM
+ * User: Zhang Shen
+ * Date: 5/23/16
+ * Time: 11:14 PM.
  */
-@Service
-public class UserService {
-    public long getUserCount() {
-        return 0L;
-    }
+public interface UserService {
+    List<User> getAllUsers();
+
+    void addUser(User user);
+
+    void updateUser(long id, User user);
+
+    Optional<User> getUser(long id);
+
+    void deleteUser(long id);
 }

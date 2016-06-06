@@ -23,8 +23,7 @@ public class Application extends SpringBootServletInitializer {
     private Environment environment;
 
     public static void main(String[] args) throws Exception {
-        SpringApplication application = new SpringApplication(Application.class);
-        application.run(args);
+        SpringApplication.run(Application.class, args);
     }
 
 

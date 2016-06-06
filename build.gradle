@@ -1,12 +1,5 @@
-// more details about springboot gradle plugin see:
-// http://docs.spring.io/autorepo/docs/spring-boot/1.2.0.BUILD-SNAPSHOT/reference/html/build-tool-plugins-gradle-plugin.html
-
 apply plugin: 'spring-boot'
-//apply plugin: 'war'      // if you want to package this project into a war file and deploy it to a external web container, please uncomment it.
 
-ext {
-  springbootVersion = '1.3.5.RELEASE'
-}
 
 jar {
     baseName = 'springboot-demo'
@@ -14,13 +7,17 @@ jar {
 }
 
 buildscript {
+    ext {
+        springbootVersion = '1.3.5.RELEASE'
+    }
+
     repositories {
         maven { url 'http://127.0.0.1:8081/nexus/content/groups/public' }
         jcenter()
     }
 
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:$springbootVersion")
     }
 }
 
@@ -44,20 +41,21 @@ allprojects {
 dependencies {
     compile(
             'org.springframework.boot:spring-boot-starter-web',
-            'org.springframework.boot:spring-boot-starter-actuator'
-            ,
-            // 'org.springframework.boot:spring-boot-starter-jdbc',
+            'org.springframework.boot:spring-boot-starter-actuator',
+            'com.google.guava:guava:18.0',
 
-            // 'org.springframework.boot:spring-boot-starter-thymeleaf',
-            //
-            // 'org.mybatis:mybatis:3.3.0',
-            // 'org.mybatis:mybatis-spring:1.2.3',
+            'io.springfox:springfox-swagger-ui:2.4.0',
+            'io.springfox:springfox-swagger2:2.4.0',
 
-          //  'com.h2database:h2:1.4.188',
-            // 'mysql:mysql-connector-java:5.1.34',
-
-            'com.google.guava:guava:18.0'
+            'org.aspectj:aspectjrt:1.8.4',
+            'org.aspectj:aspectjweaver:1.8.4'
     )
+
+    compile('org.springframework.cloud:spring-cloud-sleuth-core:1.0.0.RELEASE') {
+        exclude module: 'aspectjrt'
+    }
+
+    compile('org.springframework.cloud:spring-cloud-sleuth-zipkin:1.0.0.RELEASE')
 
 
     testCompile(
@@ -76,18 +74,4 @@ idea.project.ipr {
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.6'
-}
-
-applicationDefaultJvmArgs = [
-        "-Dspring.config.name=environment",
-        "-Dspring.profiles.active=local"
-]
-
-task bootDebug(dependsOn: bootRun) {
-}
-
-gradle.taskGraph.whenReady { taskGraph ->
-    if (taskGraph.hasTask(bootDebug)) {
-        applicationDefaultJvmArgs << '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'
-    }
 }
